@@ -20,7 +20,7 @@ let toolNames =
     Map.ofSeq([("GEN2:E2004940F54BE57110CF3F95", "Warp drive wrench"); 
                ("GEN2:AD1901011A0CAD913000001C", "Unobtainuim smacker")])
 
-let expectedTools =
+let expectedIds: Set<string> =
     ["GEN2:E2004940F54BE57110CF3F95"; "GEN2:AD1901011A0CAD913000001C"]
     |> Set.ofList
 
@@ -52,6 +52,18 @@ let AsyncFile(filename: string) =
 
     request
 
+let idToName id =
+    let nameOption = toolNames |> Map.tryFind id
+    let name =
+        match nameOption with
+        | Some n -> n
+        | None -> "no name"
+    name
+
+let idToItem id =
+    { ToolEntry.toolName = idToName id
+      toolId = id }
+
 let parseTags (tagsAsString: string) =
     let items = 
         Newtonsoft.Json.JsonConvert.DeserializeObject<RfidReads[]>(tagsAsString)
@@ -63,23 +75,31 @@ let parseTags (tagsAsString: string) =
         seq {
             for i in items do
                 for j in i.reads do
-                    let nameOption = toolNames |> Map.tryFind j.tag
-                    let name =
-                        match nameOption with
-                        | Some n -> n
-                        | None -> "no name"
+                    let name = idToName j.tag
                     yield { ToolEntry.toolName = name; toolId = j.tag } }
     convertedItems
     |> Set.ofSeq
     |> Seq.sort
     |> Seq.toArray
 
+let actualIds (data: string) =
+    let actuals = parseTags data
+    actuals
+    |> Array.map (fun x -> x.toolId)
+    |> Set.ofArray
+
+let actualItems (data: string) =
+    parseTags data
+
 let missingItems (data: string) =
-    let actualItems = parseTags data
-    let actualIds = 
-        actualItems
-        |> Array.map (fun x -> x.toolId)
-    ()
+    let actuals = actualIds data
+    let missing = Set.difference expectedIds actuals
+    missing
+    |> Set.map idToItem
+
+let expectedItems (data: string) =
+    expectedIds
+    |> Set.map idToItem
 
 let getData(filename: string) =
     async {
