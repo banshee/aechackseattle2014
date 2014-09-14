@@ -19,10 +19,10 @@ and RfidRead =
 let toolNames =
     Map.ofSeq([("GEN2:E2004940F54BE57110CF3F95", "Warp drive wrench"); 
                ("GEN2:AD1901011A0CAD913000001C", "Unobtainuim smacker");
-               ("blarg", "something with id blarg")])
+               ("GEN2:E2004940F54BE77110CF3F9D", "Nailgun")])
 
 let expectedIds: Set<string> =
-    ["GEN2:E2004940F54BE57110CF3F95"; "GEN2:AD1901011A0CAD913000001C"; "blarg"]
+    ["GEN2:E2004940F54BE57110CF3F95"; "GEN2:AD1901011A0CAD913000001C"; "GEN2:E2004940F54BE77110CF3F9D"]
     |> Set.ofList
 
 let AsyncHttp(url : string) = 
@@ -39,7 +39,6 @@ let AsyncHttp(url : string) =
         }
 
     request
-    |> Async.StartAsTask
 
 let AsyncFile(filename: string) =
     let request =
@@ -52,6 +51,8 @@ let AsyncFile(filename: string) =
         }
 
     request
+
+let compareToolEntry a b = ()
 
 let idToName id =
     let nameOption = toolNames |> Map.tryFind id
@@ -69,6 +70,7 @@ let parseTags (tagsAsString: string) =
     let items = 
         Newtonsoft.Json.JsonConvert.DeserializeObject<RfidReads[]>(tagsAsString)
         |> Array.sortBy (fun x -> x.timestamp)
+        |> Array.rev
         |> Array.toList
         |> Seq.truncate 1
         |> Array.ofSeq
@@ -91,6 +93,7 @@ let actualIds (data: string) =
 
 let actualItems (data: string) =
     parseTags data
+    |> Array.sortBy (fun x -> x.toolName.ToUpper())
 
 let missingItems (data: string) =
     let actuals = actualIds data
@@ -98,16 +101,18 @@ let missingItems (data: string) =
     missing
     |> Set.map idToItem
     |> Set.toArray
+    |> Array.sortBy (fun x -> x.toolName.ToUpper())
 
 let expectedItems (data: string): ToolEntry[] =
     expectedIds
     |> Set.map idToItem
     |> Set.toArray
+    |> Array.sortBy (fun x -> x.toolName.ToUpper())
 
 let getData() =
     let filename = "reads.json"
     async {
-        let! str = AsyncFile filename
+        let! str = AsyncHttp "http://192.168.1.112/reads.json"
         return str
     } 
     |> Async.StartAsTask
