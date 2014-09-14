@@ -73,12 +73,15 @@ let idToItem id =
 
 let parseTags (tagsAsString: string) =
     let items =
-        Newtonsoft.Json.JsonConvert.DeserializeObject<RfidReads[]>(tagsAsString)
-//        |> Array.sortBy (fun x -> x.timestamp)
-        |> Array.rev
-        |> Array.toList
-        |> Seq.truncate 1
-        |> Array.ofSeq
+        try
+            Newtonsoft.Json.JsonConvert.DeserializeObject<RfidReads[]>(tagsAsString)
+        //        |> Array.sortBy (fun x -> x.timestamp)
+            |> Array.rev
+            |> Array.toList
+            |> Seq.truncate 1
+            |> Array.ofSeq
+        with
+        | e -> Array.empty
     let convertedItems =
         seq {
             for i in items do
