@@ -47,9 +47,9 @@ namespace ToolFinder
 
 		public override void OnActivated (UIApplication application)
 		{
-			var tfs = ToolFinderServer.getData ("reads.json");
+			var tfs = ToolFinderServer.getData ();
 			Console.WriteLine ("fnord" + tfs.ToString ());
-			tfs.ToObservable<ToolFinderServer.ToolEntry[]> ()
+			tfs.ToObservable<string> ()
 				.Subscribe (x => Console.WriteLine ("got data" + x.ToString()));
 		}
 	}

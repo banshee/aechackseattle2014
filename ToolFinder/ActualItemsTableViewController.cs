@@ -19,11 +19,11 @@ namespace ToolFinder
 		{
 			base.ViewDidAppear (animated);
 
-			var tfs = ToolFinderServer.getData ("reads.json");
-			tfs.ToObservable<ToolFinderServer.ToolEntry[]> ()
+			var tfs = ToolFinderServer.getData ();
+			tfs.ToObservable<string> ()
 				.ObserveOn (System.Threading.SynchronizationContext.Current)
 				.Subscribe (items => {
-					TableView.Source = new BasicReadsTableViewSource (items);
+					TableView.Source = new BasicReadsTableViewSource (ToolFinderServer.actualItems(items));
 					TableView.ReloadData();
 				});
 		}

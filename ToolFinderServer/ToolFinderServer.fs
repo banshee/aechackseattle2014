@@ -96,18 +96,18 @@ let missingItems (data: string) =
     let missing = Set.difference expectedIds actuals
     missing
     |> Set.map idToItem
+    |> Set.toArray
 
-let expectedItems (data: string) =
+let expectedItems (data: string): ToolEntry[] =
     expectedIds
     |> Set.map idToItem
+    |> Set.toArray
 
-let getData(filename: string) =
+let getData() =
+    let filename = "reads.json"
     async {
         let! str = AsyncFile filename
-        printfn "gotstr %A" str
-        let data = parseTags str
-        printfn "data is %A" data
-        return data
+        return str
     } 
     |> Async.StartAsTask
 
