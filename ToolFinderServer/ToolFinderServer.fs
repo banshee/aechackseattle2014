@@ -18,10 +18,11 @@ and RfidRead =
 
 let toolNames =
     Map.ofSeq([("GEN2:E2004940F54BE57110CF3F95", "Warp drive wrench"); 
-               ("GEN2:AD1901011A0CAD913000001C", "Unobtainuim smacker")])
+               ("GEN2:AD1901011A0CAD913000001C", "Unobtainuim smacker");
+               ("blarg", "something with id blarg")])
 
 let expectedIds: Set<string> =
-    ["GEN2:E2004940F54BE57110CF3F95"; "GEN2:AD1901011A0CAD913000001C"]
+    ["GEN2:E2004940F54BE57110CF3F95"; "GEN2:AD1901011A0CAD913000001C"; "blarg"]
     |> Set.ofList
 
 let AsyncHttp(url : string) = 
