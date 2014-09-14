@@ -17,8 +17,11 @@ and RfidRead =
       strength: int }
 
 let toolNames =
-    Map.ofSeq([("GEN2:E2004940F54BE57110CF3F95", "Warp drive wrench"); 
-               ("GEN2:AD1901011A0CAD913000001C", "Unobtainuim smacker");
+    Map.ofSeq([("GEN2:E2004940F54BE57110CF3F95", "Warp drive wrench")
+               ("GEN2:E2004940F54BE5B110CF3F96", "Chop saw")
+               ("GEN2:E2004940F54BE43110CF3F90", "Sonic screwdriver")
+               ("GEN2:AD1901011A0D019529000024", "Geiger counter")
+               ("GEN2:AD1901011A0CAD913000001C", "Unobtainuim smacker")
                ("GEN2:E2004940F54BE77110CF3F9D", "Nailgun")])
 
 let expectedIds: Set<string> =
@@ -112,7 +115,7 @@ let expectedItems (data: string): ToolEntry[] =
 let getData() =
     let filename = "reads.json"
     async {
-        let! str = AsyncHttp "http://192.168.1.112/reads.json"
+        let! str = AsyncFile filename
         return str
     } 
     |> Async.StartAsTask
