@@ -19,7 +19,7 @@ public class BasicReadsTableViewSource : UITableViewSource {
 		// if there are no cells to reuse, create a new one
 		if (cell == null)
 			cell = new UITableViewCell (UITableViewCellStyle.Default, cellIdentifier);
-		cell.TextLabel.Text = tableItems[indexPath.Row].toolId;
+		cell.TextLabel.Text = tableItems[indexPath.Row].toolName;
 		return cell;
 	}
 }
