@@ -68,11 +68,18 @@ let parseTags (tagsAsString: string) =
                         match nameOption with
                         | Some n -> n
                         | None -> "no name"
-                    yield { ToolEntry.toolName = name; toolId = name } }
+                    yield { ToolEntry.toolName = name; toolId = j.tag } }
     convertedItems
     |> Set.ofSeq
     |> Seq.sort
     |> Seq.toArray
+
+let missingItems (data: string) =
+    let actualItems = parseTags data
+    let actualIds = 
+        actualItems
+        |> Array.map (fun x -> x.toolId)
+    ()
 
 let getData(filename: string) =
     async {
