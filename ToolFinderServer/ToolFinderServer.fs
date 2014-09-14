@@ -72,7 +72,7 @@ let idToItem id =
 let parseTags (tagsAsString: string) =
     let items = 
         Newtonsoft.Json.JsonConvert.DeserializeObject<RfidReads[]>(tagsAsString)
-        |> Array.sortBy (fun x -> x.timestamp)
+//        |> Array.sortBy (fun x -> x.timestamp)
         |> Array.rev
         |> Array.toList
         |> Seq.truncate 1
@@ -85,7 +85,7 @@ let parseTags (tagsAsString: string) =
                     yield { ToolEntry.toolName = name; toolId = j.tag } }
     convertedItems
     |> Set.ofSeq
-    |> Seq.sort
+//    |> Seq.sort
     |> Seq.toArray
 
 let actualIds (data: string) =
@@ -96,7 +96,7 @@ let actualIds (data: string) =
 
 let actualItems (data: string) =
     parseTags data
-    |> Array.sortBy (fun x -> x.toolName.ToUpper())
+//    |> Array.sortBy (fun x -> x.toolName.ToUpper())
 
 let missingItems (data: string) =
     let actuals = actualIds data
@@ -104,18 +104,25 @@ let missingItems (data: string) =
     missing
     |> Set.map idToItem
     |> Set.toArray
-    |> Array.sortBy (fun x -> x.toolName.ToUpper())
+//    |> Array.sortBy (fun x -> x.toolName.ToUpper())
 
 let expectedItems (data: string): ToolEntry[] =
     expectedIds
     |> Set.map idToItem
     |> Set.toArray
-    |> Array.sortBy (fun x -> x.toolName.ToUpper())
+//    |> Array.sortBy (fun x -> x.toolName.ToUpper())
 
 let getData() =
     let filename = "reads.json"
     async {
         let! str = AsyncHttp "http://192.168.1.112/reads.json"
         return str
+//        with 
+//        | e -> 
+//            printfn "got exception %A" e
+//            """[
+//{ "timestamp": 1410645102688, "reads": [{"tag":"GEN2:E2004940F54BE5B110CF3F96","count":"5","strength":"-25"},{"tag":"GEN2:E2004940F54BE77110CF3F9D","count":"4","strength":"-43"},{"tag":"GEN2:AD1901011A0CAD913000001C","count":"4","strength":"-18"},{"tag":"GEN2:E2004940F54BE43110CF3F90","count":"4","strength":"-41"},{"tag":"GEN2:AD1901011A0D019529000024","count":"3","strength":"-30"},{"tag":"GEN2:E2004940F54BE57110CF3F95","count":"4","strength":"-25"},]}
+//]""
+//
     } 
     |> Async.StartAsTask
