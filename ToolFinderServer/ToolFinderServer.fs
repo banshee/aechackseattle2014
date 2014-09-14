@@ -4,7 +4,7 @@ open System.IO
 open System.Net
 
 type ToolEntry =
-    { toolName: string 
+    { toolName: string
       toolId : string }
 
 type RfidReads =
@@ -20,15 +20,17 @@ let toolNames =
     Map.ofSeq([("GEN2:E2004940F54BE57110CF3F95", "Grinder")
                ("GEN2:E2004940F54BE5B110CF3F96", "Hammer drill")
                ("GEN2:E2004940F54BE43110CF3F90", "Screw gun")
-               ("GEN2:AD1901011A0D019529000024", "Sawzall")
-               ("GEN2:AD1901011A0CAD913000001C", "Unobtainuim smacker")
-               ("GEN2:E2004940F54BE77110CF3F9D", "Nailgun")])
+               ("GEN2:E2004940F54BE23110CF3F88", "Sawzall")
+               ("GEN2:AD1901011A0D15912F000026", "Unobtainuim smacker")
+               ("GEN2:AD1901011A0D0D9130000025", "Nailgun")
+               ("GEN2:AD1901011A0CEF804E000423", "Hard Hat 1")
+               ("GEN2:AD1901011A0D019529000024", "Bin 1")])
 
 let expectedIds: Set<string> =
     ["GEN2:E2004940F54BE57110CF3F95"; "GEN2:AD1901011A0CAD913000001C"; "GEN2:E2004940F54BE77110CF3F9D"]
     |> Set.ofList
 
-let AsyncHttp(url : string) = 
+let AsyncHttp(url : string) =
     let request =
         async { // Create the web request object
             let req = WebRequest.Create(url)
@@ -70,7 +72,7 @@ let idToItem id =
       toolId = id }
 
 let parseTags (tagsAsString: string) =
-    let items = 
+    let items =
         Newtonsoft.Json.JsonConvert.DeserializeObject<RfidReads[]>(tagsAsString)
         |> Array.sortBy (fun x -> x.timestamp)
         |> Array.rev
@@ -117,5 +119,5 @@ let getData() =
     async {
         let! str = AsyncHttp "http://192.168.1.112/reads.json"
         return str
-    } 
+    }
     |> Async.StartAsTask
